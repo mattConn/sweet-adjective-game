@@ -5,14 +5,19 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     float pMoveSpeed = 6.0f;
-    float jumpHeight = 10.0f;
-    bool jumping;
+    float jumpHeight = 20.0f;
+    float moveDir;
+    private int direction;
+    private int jumpCounter=0;
+    short maxJump = 1;
+    int dashCounter = 0;
+    short maxDash = 0;
     Rigidbody2D charRigidBody;
     SpriteRenderer charSprite;
-   
     // Start is called before the first frame update
     void Start()
     {
+        direction = 1;
         charRigidBody = GetComponent<Rigidbody2D>();
         charSprite = GetComponent<SpriteRenderer>();
     }
@@ -20,28 +25,42 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         //getting direction of horizontal movement from player input.
         //multiplying by time.deltatime not nessecary in this case due to the fact that we are modifying the rigidbody's velocity
-        float moveDir = Input.GetAxis("Horizontal") * pMoveSpeed;
+        moveDir = Input.GetAxis("Horizontal") * pMoveSpeed;
         charRigidBody.velocity = new Vector2(moveDir, charRigidBody.velocity.y);
-        // Your jump code:
-        if (Input.GetButtonDown("Jump") && !jumping)
+        if (Input.GetButtonDown("Jump") && jumpCounter<maxJump)
         {
-            Debug.Log("Jumping");
-            charRigidBody.velocity = new Vector2(charRigidBody.velocity.x, jumpHeight);
-            jumping = true;
+            //float go = jumpHeight; Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(Physics2D.gravity.y));
+          //  Debug.Log(go);
+            charRigidBody.AddForce(Vector2.up * jumpHeight, ForceMode2D.Impulse);
+            jumpCounter++;
 
         }
+        if (Input.GetButtonDown("Dash"))
+        {
+            Debug.Log("Dashing");
+            charRigidBody.velocity = new Vector2(charRigidBody.velocity.x+100.0f*direction, charRigidBody.velocity.y);
+
+        }
+    
+
+    }
+    private void FixedUpdate()
+    {
         if (moveDir > 0)
         {
             charSprite.flipX = false;
+            direction = 1;
+            Debug.Log(direction);
         }
         else if (moveDir < 0)
         {
             charSprite.flipX = true;
+            direction = -1;
+            Debug.Log(direction);
         }
-        //Debug.Log(moveDir); //used this to see the velocity values for the character
-
     }
     void OnCollisionEnter2D(Collision2D col)
     {
@@ -50,12 +69,9 @@ public class Movement : MonoBehaviour
         if (normal.y > 0)//if the bottom side of our character hits something
         { //we reset the jumping bool to allow for jumps
             Debug.Log("Landed");
-            jumping = false;
+            jumpCounter = 0;
         }
-        /* if (normal.y < 0)
-         { //if the top side hit something
-             Debug.Log("You Hit the roof");
-         }*/
+        
     }
 }
 

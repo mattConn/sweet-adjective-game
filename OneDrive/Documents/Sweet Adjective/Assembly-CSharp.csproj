@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\CameraMovement.cs" />
     <Compile Include="Assets\Movement.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/Robert/Documents/sweet-adjective-game/OneDrive/Documents/Sweet Adjective/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
